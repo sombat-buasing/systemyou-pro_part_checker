@@ -206,7 +206,6 @@ type
     FDMemJob_order: TFDMemTable;
     FDMemJob_orderpart_model: TStringField;
     FDMemJob_orderpart_status: TStringField;
-    FDMemJob_orderpart_send_date: TStringField;
     FDMemJob_orderpart_created_date: TStringField;
     FDMemJob_orderpart_selected: TBooleanField;
     FDMemJob_orderlate_days: TIntegerField;
@@ -219,6 +218,7 @@ type
     IntegerField3: TIntegerField;
     FDMemJob_ordersend_date: TStringField;
     FDMemJob_ordercreated_date: TStringField;
+    FDMemJob_orderpart_send_date: TDateTimeField;
     procedure FormShow(Sender: TObject);
     procedure AdvGlowButton11Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -603,13 +603,13 @@ begin
         FDMemJob_order.FieldByName('part_model'    ).AsString := qryJob_order.FieldByName('part_model').AsString;
         FDMemJob_order.FieldByName('part_status'   ).AsString := qryJob_order.FieldByName('part_status').AsString;
 
-        cDate := qryJob_order.FieldByName('part_send_date').AsString ;
-        FDMemJob_order.FieldByName('part_send_date').AsString := cDate;
-        FDMemJob_order.FieldByName('send_date'     ).AsString := Copy(cDate,7,4) + Copy(cDate,4,2) + Copy(cDate,1,2);
+        cDate := FormatDateTime('YYYYMMDD HHMMSS',qryJob_order.FieldByName('part_send_date').AsDateTime) ;
+        FDMemJob_order.FieldByName('part_send_date').AsString := qryJob_order.FieldByName('part_send_date').AsString;
+        FDMemJob_order.FieldByName('send_date'     ).AsString := cDate;
 
-        cDate := qryJob_order.FieldByName('part_created_date').AsString ;
-        FDMemJob_order.FieldByName('part_created_date').AsString := cDate;
-        FDMemJob_order.FieldByName('created_date'     ).AsString := Copy(cDate,7,4) + Copy(cDate,4,2) + Copy(cDate,1,2);
+        cDate := FormatDateTime('YYYYMMDD HHMMSS',qryJob_order.FieldByName('part_created_date').AsDateTime) ;
+        FDMemJob_order.FieldByName('part_created_date').AsString := qryJob_order.FieldByName('part_created_date').AsString;
+        FDMemJob_order.FieldByName('created_date'     ).AsString := cDate;
 
         FDMemJob_order.FieldByName('late_days'        ).AsString := qryJob_order.FieldByName('late_days').AsString;
         FDMemJob_order.Post;
@@ -787,7 +787,7 @@ begin
 
   if txFind <> Emptystr then
   begin
-    qryPart_Model.Sql.Add(' and part_id = ' + txFind ) ;
+    qryPart_Model.Sql.Add(' and jb.part_id = ' + txFind ) ;
   end;
 
   if prtModel_sortby = ''               then qryPart_model.Sql.Add('order by jb.part_id  ');
@@ -829,6 +829,8 @@ begin
 
   qryPart_model.Active := True;
 
+//  memo1.lines.clear;
+//  memo1.lines.add( qryPart_model.Sql.Text ) ;
 
   TFloatField( qryPart_model.FieldByName('copies') ).DisplayFormat := ',0 ' ;
   TFloatField( qryPart_model.FieldByName('part_thickness') ).DisplayFormat := ',0.00 ' ;
@@ -1233,6 +1235,7 @@ begin
   end
   else
   begin
+    EditFind.Text := '';
     ShowPartModel( FDMemJob_order.FieldByName('part_model').AsString ) ;
 
     ShowButton   ( FDMemJob_order.FieldByName('part_model').AsString , 'Normal') ;
@@ -2150,7 +2153,7 @@ end;
 
 procedure TFrmMain.rbCheckAllClick(Sender: TObject);
 begin
-  ShowPartModel_detail( qryJob_order.FieldByName('part_model').AsString ) ;
+  ShowPartModel_detail( FDMemJob_order.FieldByName('part_model').AsString ) ;
 end;
 
 procedure TFrmMain.FormShow(Sender: TObject);

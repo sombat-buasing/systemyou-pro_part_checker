@@ -1126,7 +1126,7 @@ object FrmMain: TFrmMain
         Progress.ShowBorder = False
         Progress.Stacked = False
         Style = psText
-        Text = '2.108'
+        Text = '2.308'
         TimeFormat = 'h:mm:ss'
         Width = 40
       end
@@ -17377,9 +17377,6 @@ object FrmMain: TFrmMain
       FieldName = 'part_status'
       Size = 30
     end
-    object FDMemJob_orderpart_send_date: TStringField
-      FieldName = 'part_send_date'
-    end
     object FDMemJob_orderpart_created_date: TStringField
       FieldName = 'part_created_date'
     end
@@ -17393,6 +17390,9 @@ object FrmMain: TFrmMain
     object FDMemJob_ordercreated_date: TStringField
       FieldName = 'created_date'
       Size = 10
+    end
+    object FDMemJob_orderpart_send_date: TDateTimeField
+      FieldName = 'part_send_date'
     end
   end
   object FDMemTemp1: TFDMemTable
